@@ -4,20 +4,35 @@ namespace App\Entity;
 
 use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Annotation\ApiResource;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\RangeFilter;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * @ApiResource(
- *     collectionOperations={"get"},
- *     itemOperations={"get"},
+ *     collectionOperations={"get"={
+ *          "normalization_context"={
+ *              "groups"={"mobile:collection:get"},
+ *              "swagger_definition_name": "Lire"
+ *          }
+ *     }},
+ *     itemOperations={"get"={
+ *          "normalization_context"={
+ *              "groups"={"mobile:item:get"},
+ *              "swagger_definition_name": "Lire"
+ *          }
+ *     }},
  *     attributes={
  *          "pagination_items_per_page"=10
- *     }
+ *     },
+ *
  * )
  * @ApiFilter(SearchFilter::class, properties={"model": "partial", "brand.name" : "exact"})
  * @ApiFilter(RangeFilter::class, properties={"year"})
+ * @ApiFilter(RangeFilter::class, properties={"clientMobiles.price"})
  * @ORM\Entity(repositoryClass="App\Repository\MobileRepository")
  */
 class Mobile
@@ -32,28 +47,44 @@ class Mobile
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\Brand", inversedBy="mobiles")
      * @ORM\JoinColumn(nullable=false)
+     * @Groups({"mobile:item:get", "mobile:collection:get"})
      */
     private $brand;
 
     /**
      * @ORM\Column(type="string", length=50)
+     * @Groups({"mobile:item:get", "mobile:collection:get"})
      */
     private $model;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"mobile:item:get", "mobile:collection:get"})
      */
     private $picture;
 
     /**
      * @ORM\Column(type="text", nullable=true)
+     * @Groups({"mobile:item:get"})
      */
     private $description;
 
     /**
      * @ORM\Column(type="integer")
+     * @Groups({"mobile:item:get", "mobile:collection:get"})
      */
     private $year;
+
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\ClientMobile", mappedBy="mobile")
+     * @Groups({"mobile:item:get", "mobile:collection:get"})
+     */
+    private $clientMobiles;
+
+    public function __construct()
+    {
+        $this->clientMobiles = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -116,6 +147,37 @@ class Mobile
     public function setYear(int $year): self
     {
         $this->year = $year;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|ClientMobile[]
+     */
+    public function getClientMobiles(): Collection
+    {
+        return $this->clientMobiles;
+    }
+
+    public function addClientMobile(ClientMobile $clientMobile): self
+    {
+        if (!$this->clientMobiles->contains($clientMobile)) {
+            $this->clientMobiles[] = $clientMobile;
+            $clientMobile->setMobile($this);
+        }
+
+        return $this;
+    }
+
+    public function removeClientMobile(ClientMobile $clientMobile): self
+    {
+        if ($this->clientMobiles->contains($clientMobile)) {
+            $this->clientMobiles->removeElement($clientMobile);
+            // set the owning side to null (unless already changed)
+            if ($clientMobile->getMobile() === $this) {
+                $clientMobile->setMobile(null);
+            }
+        }
 
         return $this;
     }
