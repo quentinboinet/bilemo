@@ -10,6 +10,7 @@ use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\RangeFilter;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ApiResource(
@@ -54,6 +55,13 @@ class Mobile
     /**
      * @ORM\Column(type="string", length=50)
      * @Groups({"mobile:item:get", "mobile:collection:get"})
+     * @Assert\NotBlank(
+     *     message="Le modèle ne peut pas être vide."
+     * )
+     * @Assert\Length(
+     *     min=2,
+     *     minMessage="Le modèle du mobile doit contenir au minimum 2 caractères."
+     * )
      */
     private $model;
 
@@ -66,12 +74,23 @@ class Mobile
     /**
      * @ORM\Column(type="text", nullable=true)
      * @Groups({"mobile:item:get"})
+     * @Assert\Length(
+     *     min=50,
+     *     minMessage="La description du mobile doit contenir au minimum 50 caractères."
+     * )
      */
     private $description;
 
     /**
      * @ORM\Column(type="integer")
      * @Groups({"mobile:item:get", "mobile:collection:get"})
+     * @Assert\NotBlank(
+     *     message="L'année du mobile ne peut pas être vide."
+     * )
+     * @Assert\Type(
+     *     type="integer",
+     *     message="L'année du mobile doit être un nombre."
+     * )
      */
     private $year;
 
