@@ -49,6 +49,7 @@ class Mobile
      * @ORM\ManyToOne(targetEntity="App\Entity\Brand", inversedBy="mobiles")
      * @ORM\JoinColumn(nullable=false)
      * @Groups({"mobile:item:get", "mobile:collection:get"})
+     * @Assert\Valid()
      */
     private $brand;
 
