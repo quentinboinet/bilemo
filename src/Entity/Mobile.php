@@ -9,6 +9,11 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\RangeFilter;
+use Lexik\Bundle\JWTAuthenticationBundle\Encoder\JWTEncoderInterface;
+use Lexik\Bundle\JWTAuthenticationBundle\Security\Guard\JWTTokenAuthenticator;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
+use Symfony\Component\Security\Core\Security;
+use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -38,6 +43,8 @@ use Symfony\Component\Validator\Constraints as Assert;
  */
 class Mobile
 {
+    private $JWTTokenAuthenticator;
+
     /**
      * @ORM\Id()
      * @ORM\GeneratedValue()
@@ -49,6 +56,7 @@ class Mobile
      * @ORM\ManyToOne(targetEntity="App\Entity\Brand", inversedBy="mobiles")
      * @ORM\JoinColumn(nullable=false)
      * @Groups({"mobile:item:get", "mobile:collection:get"})
+     * @Assert\Valid()
      */
     private $brand;
 
@@ -100,9 +108,10 @@ class Mobile
      */
     private $clientMobiles;
 
-    public function __construct()
+    public function __construct(JWTTokenAuthenticator $JWTTokenAuthenticator)
     {
         $this->clientMobiles = new ArrayCollection();
+        $this->JWTTokenAuthenticator = $JWTTokenAuthenticator;
     }
 
     public function getId(): ?int
@@ -175,7 +184,9 @@ class Mobile
      */
     public function getClientMobiles(): Collection
     {
-        return $this->clientMobiles;
+        return $this->clientMobiles->filter(function(ClientMobile $clientMobile) {
+            return $clientMobile->getClient()->getEmail() === $this->JWTTokenAuthenticator->getCredentials();
+        });
     }
 
     public function addClientMobile(ClientMobile $clientMobile): self
