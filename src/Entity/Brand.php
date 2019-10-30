@@ -27,7 +27,9 @@ class Brand
 
     /**
      * @ORM\Column(type="string", length=50)
-     * @Groups({"mobile:read"})
+
+     * @Groups({"mobile:item:get", "mobile:collection:get"})
+
      * @Assert\NotBlank(
      *     message="La marque ne peut pas être vide."
      * )
