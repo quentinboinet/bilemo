@@ -4,7 +4,6 @@
 namespace App\Controller;
 
 
-use ApiPlatform\Core\Annotation\ApiResource;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
 

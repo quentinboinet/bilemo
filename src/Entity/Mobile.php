@@ -4,8 +4,6 @@ namespace App\Entity;
 
 use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Annotation\ApiResource;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\RangeFilter;
@@ -22,7 +20,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *     collectionOperations={"get"={
  *          "normalization_context"={
  *              "groups"={"mobile:collection:get"},
- *              "swagger_definition_name": "Lire"
+ *              "swagger_definition_name": "Lire",
  *          }
  *     }},
  *     itemOperations={"get"={
@@ -38,7 +36,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  * )
  * @ApiFilter(SearchFilter::class, properties={"model": "partial", "brand.name" : "exact"})
  * @ApiFilter(RangeFilter::class, properties={"year"})
- * @ApiFilter(RangeFilter::class, properties={"clientMobiles.price"})
+ * @ApiFilter(RangeFilter::class, properties={"price"})
  * @ORM\Entity(repositoryClass="App\Repository\MobileRepository")
  */
 class Mobile
@@ -103,16 +101,31 @@ class Mobile
     private $year;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\ClientMobile", mappedBy="mobile")
+     * @ORM\Column(type="integer")
      * @Groups({"mobile:item:get", "mobile:collection:get"})
+     * @Assert\NotBlank(
+     *     message="La valeur du stock ne peut être vide."
+     * )
+     * @Assert\Type(
+     *     type="integer",
+     *     message="Le stock doit être un nombre."
+     * )
      */
-    private $clientMobiles;
+    private $stock;
 
-    public function __construct(JWTTokenAuthenticator $JWTTokenAuthenticator)
-    {
-        $this->clientMobiles = new ArrayCollection();
-        $this->JWTTokenAuthenticator = $JWTTokenAuthenticator;
-    }
+    /**
+     * @ORM\Column(type="float")
+     * @Groups({"mobile:item:get", "mobile:collection:get"})
+     * @Assert\NotBlank(
+     *     message="Le prix entré ne peut être vide."
+     * )
+     * @Assert\Type(
+     *     type="float",
+     *     message="Le prix entré doit être un nombre."
+     * )
+     */
+    private $price;
+
 
     public function getId(): ?int
     {
@@ -179,35 +192,26 @@ class Mobile
         return $this;
     }
 
-    /**
-     * @return Collection|ClientMobile[]
-     */
-    public function getClientMobiles(): Collection
+    public function getStock(): ?int
     {
-        return $this->clientMobiles->filter(function(ClientMobile $clientMobile) {
-            return $clientMobile->getClient()->getEmail() === $this->JWTTokenAuthenticator->getCredentials();
-        });
+        return $this->stock;
     }
 
-    public function addClientMobile(ClientMobile $clientMobile): self
+    public function setStock(int $stock): self
     {
-        if (!$this->clientMobiles->contains($clientMobile)) {
-            $this->clientMobiles[] = $clientMobile;
-            $clientMobile->setMobile($this);
-        }
+        $this->stock = $stock;
 
         return $this;
     }
 
-    public function removeClientMobile(ClientMobile $clientMobile): self
+    public function getPrice(): ?float
     {
-        if ($this->clientMobiles->contains($clientMobile)) {
-            $this->clientMobiles->removeElement($clientMobile);
-            // set the owning side to null (unless already changed)
-            if ($clientMobile->getMobile() === $this) {
-                $clientMobile->setMobile(null);
-            }
-        }
+        return $this->price;
+    }
+
+    public function setPrice(float $price): self
+    {
+        $this->price = $price;
 
         return $this;
     }

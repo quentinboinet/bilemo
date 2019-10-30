@@ -3,9 +3,8 @@
 namespace App\Entity;
 
 use ApiPlatform\Core\Annotation\ApiResource;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -20,6 +19,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *          "swagger_definition_name": "Lire"
  *      }
  * )
+ * @UniqueEntity(fields={"email"})
  */
 class Client implements UserInterface
 {
@@ -65,15 +65,6 @@ class Client implements UserInterface
      */
     private $name;
 
-    /**
-     * @ORM\OneToMany(targetEntity="App\Entity\ClientMobile", mappedBy="client")
-     */
-    private $clientMobiles;
-
-    public function __construct()
-    {
-        $this->clientMobiles = new ArrayCollection();
-    }
 
     public function getId(): ?int
     {
@@ -165,34 +156,4 @@ class Client implements UserInterface
         return $this;
     }
 
-    /**
-     * @return Collection|ClientMobile[]
-     */
-    public function getClientMobiles(): Collection
-    {
-        return $this->clientMobiles;
-    }
-
-    public function addClientMobile(ClientMobile $clientMobile): self
-    {
-        if (!$this->clientMobiles->contains($clientMobile)) {
-            $this->clientMobiles[] = $clientMobile;
-            $clientMobile->setClient($this);
-        }
-
-        return $this;
-    }
-
-    public function removeClientMobile(ClientMobile $clientMobile): self
-    {
-        if ($this->clientMobiles->contains($clientMobile)) {
-            $this->clientMobiles->removeElement($clientMobile);
-            // set the owning side to null (unless already changed)
-            if ($clientMobile->getClient() === $this) {
-                $clientMobile->setClient(null);
-            }
-        }
-
-        return $this;
-    }
 }
