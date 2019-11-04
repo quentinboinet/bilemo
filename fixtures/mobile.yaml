@@ -1,0 +1,9 @@
+App\Entity\Mobile:
+  mobile{1..20}:
+    brand: '@brand_*'
+    model: '<company()>'
+    picture: '<imageUrl()>'
+    description: '<paragraph(4)>'
+    year: '<numberBetween(2016, 2020)>'
+    stock: '<numberBetween(0,200)>'
+    price: '<randomFloat(2, 1, 800)>'
