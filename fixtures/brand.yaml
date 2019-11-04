@@ -1,0 +1,3 @@
+App\Entity\Brand:
+  brand_{Apple, Samsung, Huawei, Asus, Xiaomi, Sony, Honor, Nokia}:
+    name: '<current()>'

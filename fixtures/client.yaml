@@ -1,0 +1,6 @@
+App\Entity\Client:
+  client_{Free, SFR, Orange, Bouygues, Sosh}:
+    email: 'client_<current()>\@gmail.com'
+    roles: '[]'
+    password: '<current()>'
+    name: '<current()>'

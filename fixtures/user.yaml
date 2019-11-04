@@ -1,0 +1,8 @@
+App\Entity\User:
+  user{1..30}:
+    client: '@client_*'
+    username: '<colorName()>'
+    email: '<freeEmail()>'
+    password: '@self->username'
+    firstname: '<firstName()>'
+    lastname: '<lastName()>'
