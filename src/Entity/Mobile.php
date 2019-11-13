@@ -35,8 +35,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *
  * )
  * @ApiFilter(SearchFilter::class, properties={"model": "partial", "brand.name" : "exact"})
- * @ApiFilter(RangeFilter::class, properties={"year"})
- * @ApiFilter(RangeFilter::class, properties={"price"})
+ * @ApiFilter(RangeFilter::class, properties={"year", "price"})
  * @ORM\Entity(repositoryClass="App\Repository\MobileRepository")
  */
 class Mobile
