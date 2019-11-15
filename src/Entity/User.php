@@ -23,6 +23,9 @@ use Symfony\Component\Validator\Constraints as Assert;
  *          }
  *     },
  *     "post"={
+ *          "normalization_context"= {
+ *              "groups"={"user:item:get"}
+ *          },
             "denormalization_context"={
  *              "groups"={"user:collection:post"},
  *              "swagger_definition_name": "Ecrire",
