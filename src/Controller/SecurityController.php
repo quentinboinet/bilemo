@@ -10,7 +10,7 @@ use Symfony\Component\Routing\Annotation\Route;
 class SecurityController extends AbstractController
 {
     /**
-     * @Route("/login", name="app_login", methods={"POST"})
+     * @Route("/api/login", name="app_login", methods={"POST"})
      */
     public function login()
     {
@@ -22,5 +22,12 @@ class SecurityController extends AbstractController
         return $this->json([
                 'user' => $this->getUser() ? $this->getUser()->getId() : null]
         );
+    }
+
+    /**
+     * @Route("/api/logout", name="app_logout")
+     */
+    public function logout()
+    {
     }
 }

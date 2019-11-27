@@ -7,11 +7,6 @@ use ApiPlatform\Core\Annotation\ApiResource;
 use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\RangeFilter;
-use Lexik\Bundle\JWTAuthenticationBundle\Encoder\JWTEncoderInterface;
-use Lexik\Bundle\JWTAuthenticationBundle\Security\Guard\JWTTokenAuthenticator;
-use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
-use Symfony\Component\Security\Core\Security;
-use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -35,13 +30,11 @@ use Symfony\Component\Validator\Constraints as Assert;
  *
  * )
  * @ApiFilter(SearchFilter::class, properties={"model": "partial", "brand.name" : "exact"})
- * @ApiFilter(RangeFilter::class, properties={"year"})
- * @ApiFilter(RangeFilter::class, properties={"price"})
+ * @ApiFilter(RangeFilter::class, properties={"year", "price"})
  * @ORM\Entity(repositoryClass="App\Repository\MobileRepository")
  */
 class Mobile
 {
-    private $JWTTokenAuthenticator;
 
     /**
      * @ORM\Id()
