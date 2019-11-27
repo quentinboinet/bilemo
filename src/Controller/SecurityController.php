@@ -23,4 +23,11 @@ class SecurityController extends AbstractController
                 'user' => $this->getUser() ? $this->getUser()->getId() : null]
         );
     }
+
+    /**
+     * @Route("/api/logout", name="app_logout")
+     */
+    public function logout()
+    {
+    }
 }

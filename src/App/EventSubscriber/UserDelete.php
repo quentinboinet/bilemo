@@ -22,10 +22,7 @@ final class UserDelete implements EventSubscriberInterface
     public function checkUserDeleted(ViewEvent $event): void
     {
         $pathInfo = $event->getRequest()->getPathInfo();
-        if (strpos($pathInfo, '/api/users/') === false && $event->getRequest()->getMethod() !== 'DELETE') {
-            return;
-        }
-
+        if (strpos($pathInfo, '/api/users/') !== false && $event->getRequest()->getMethod() === 'DELETE') {
             $data['data'] = array(
                 'message' => 'Utilisateur correctement supprimé !',
             );
@@ -36,5 +33,9 @@ final class UserDelete implements EventSubscriberInterface
             );
             $response->headers->set('Content-Type', 'application/ld+json');
             $event->setResponse($response);
+        }
+        else {
+            return;
+        }
     }
 }
